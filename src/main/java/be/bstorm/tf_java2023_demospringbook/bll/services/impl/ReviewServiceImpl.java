@@ -1,6 +1,7 @@
 package be.bstorm.tf_java2023_demospringbook.bll.services.impl;
 
 import be.bstorm.tf_java2023_demospringbook.bll.services.ReviewService;
+import be.bstorm.tf_java2023_demospringbook.bll.services.exception.MultipleReviewException;
 import be.bstorm.tf_java2023_demospringbook.dal.repositories.BookRepository;
 import be.bstorm.tf_java2023_demospringbook.dal.repositories.ReviewRepository;
 import be.bstorm.tf_java2023_demospringbook.dal.repositories.UserRepository;
@@ -32,6 +33,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review insert(Review entity) {
+        if( reviewRepository.existsByBook_IdAndWrittenBy_Id(entity.getBook().getId(), entity.getWrittenBy().getId()) )
+            throw new MultipleReviewException();
+
         User user = userRepository.findById( entity.getWrittenBy().getId() ).orElseThrow();
         Book book = bookRepository.findById( entity.getBook().getId() ).orElseThrow();
 
@@ -44,6 +48,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review update(Long id, Review entity) {
         Review toUpdate = getById( id );
+
+        if(reviewRepository.existsByIdNotAndBook_IdAndWrittenBy_Id(id, entity.getBook().getId(), entity.getWrittenBy().getId()) )
+            throw new MultipleReviewException();
 
         toUpdate.setRating( entity.getRating() );
         toUpdate.setComment( entity.getComment() );
