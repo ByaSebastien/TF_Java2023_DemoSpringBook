@@ -9,7 +9,6 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleRuntimeException(Exception exception){
-
         return ResponseEntity.status(400).body(exception.getMessage());
     }
 }
