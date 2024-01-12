@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -21,8 +24,16 @@ public class Book {
     @ManyToOne
     private Author author;
 
-    public Book(String title, Author author) {
+    @OneToMany(mappedBy = "book")
+    private List<Review> reviews;
+
+//    @Temporal(TemporalType.DATE)
+    @Column(name = "book_release_date", nullable = false)
+    private LocalDate releaseDate;
+
+    public Book(String title, Author author, LocalDate releaseDate) {
         this.title = title;
         this.author = author;
+        this.releaseDate = releaseDate;
     }
 }
